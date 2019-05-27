@@ -5,7 +5,7 @@ use std::fs;
 use std::process;
 
 fn main() {
-    let matches = App::new("ssz-cli")
+    let matches = App::new("ssz")
         .arg(
             Arg::with_name("filename")
                 .help("the name of the input file")
