@@ -2,6 +2,12 @@
 name = "ssz-cli"
 version = "0.1.0"
 authors = ["Matt Garnett <14004106+c-o-l-o-r@users.noreply.github.com>"]
+license = "Apache-2.0"
+description = "A tool to convert files to a hex representation of SSZ"
+homepage = "https://github.com/c-o-l-o-r/ssz-cli"
+repository = "https://github.com/c-o-l-o-r/ssz-cli"
+keywords = ["ssz", "wasm", "ewasm"]
+categories = ["command-line-utilities", "ethereum"]
 edition = "2018"
 
 [dependencies]
