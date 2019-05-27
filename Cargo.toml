@@ -1,0 +1,9 @@
+[package]
+name = "ssz-cli"
+version = "0.1.0"
+authors = ["Matt Garnett <14004106+c-o-l-o-r@users.noreply.github.com>"]
+edition = "2018"
+
+[dependencies]
+ssz = "0.1.2"
+clap = "2.33.0"
