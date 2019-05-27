@@ -1,8 +1,8 @@
 use clap::{App, Arg};
+use hex;
 use ssz::Encode;
 use std::fs;
 use std::process;
-use std::string::String;
 
 fn main() {
     let matches = App::new("ssz-cli")
@@ -16,7 +16,7 @@ fn main() {
 
     if let Some(filename) = matches.value_of("filename") {
         let ssz = file_to_ssz(filename);
-        println!("{:?}", ssz);
+        println!("{}", hex::encode(ssz));
     }
 }
 
