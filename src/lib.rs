@@ -12,7 +12,7 @@ enum SszType {
 #[derive(Deserialize)]
 #[serde(tag = "type", content = "value")]
 enum SszVariableType {
-    List(Box<SszType>),
+    List(Vec<Box<SszType>>),
     // Union(Box<SszType>),
     Container(Box<SszType>),
     Vector(Box<SszType>),
@@ -33,24 +33,42 @@ enum SszFixedType {
 }
 
 pub fn json_to_ssz(data: Vec<u8>) -> Vec<u8> {
-    let v: SszFixedType = serde_json::from_slice(&data).unwrap();
-    dfs_json(&v)
+    let v: SszType = serde_json::from_slice(&data).unwrap();
+    serialize(&v)
 }
 
-fn dfs_json(def: &SszFixedType) -> Vec<u8> {
-    match def {
+fn serialize(t: &SszType) -> Vec<u8> {
+    match t {
+        SszType::Fixed(f) => serialize_fixed(f),
+        SszType::Variable(v) => match v {
+            SszVariableType::List(v) => {
+                let result = v
+                    .iter()
+                    .fold(vec![], |acc, v| [&acc[..], &serialize(v)[..]].concat());
+                let mut len = (result.len() as u32).encode();
+                len.extend(result);
+                len
+            }
+            SszVariableType::Container(v) => unimplemented!(),
+            SszVariableType::Vector(v) => unimplemented!(),
+        },
+    }
+}
+
+fn serialize_fixed(f: &SszFixedType) -> Vec<u8> {
+    match f {
         SszFixedType::Uint8(i) => vec![*i],
         SszFixedType::Uint16(i) => i.encode(),
         SszFixedType::Uint32(i) => i.encode(),
         SszFixedType::Uint64(i) => i.encode(),
         SszFixedType::Uint128(i) => i.encode(),
         SszFixedType::Bool(b) => b.encode(),
-        SszFixedType::Container(c) => c
-            .values()
-            .fold(vec![], |acc, v| [&acc[..], &dfs_json(v)[..]].concat()),
-        SszFixedType::Vector(v) => v
-            .iter()
-            .fold(vec![], |acc, v| [&acc[..], &dfs_json(v)[..]].concat()),
+        SszFixedType::Container(c) => c.values().fold(vec![], |acc, v| {
+            [&acc[..], &serialize_fixed(v)[..]].concat()
+        }),
+        SszFixedType::Vector(v) => v.iter().fold(vec![], |acc, v| {
+            [&acc[..], &serialize_fixed(v)[..]].concat()
+        }),
     }
 }
 
@@ -61,52 +79,103 @@ mod tests {
     #[test]
     fn test_fixed_size() {
         let json = r#"     
-{
-    "type": "Container",
+{   
+    "type": "Fixed",
     "value": {
-        "fixed": {
-            "type": "Vector",
-            "value": [
-                {
-                    "type": "Uint8",
-                    "value": 0
-                },
-                {
-                    "type": "Uint8",
-                    "value": 1
-                },
-                {
-                    "type": "Uint8",
-                    "value": 2
-                },
-                {
-                    "type": "Uint8",
-                    "value": 3
-                },
-                {
-                    "type": "Uint8",
-                    "value": 4
-                }
-            ]
-        },
-        "other": {
-            "type": "Container",
-            "value": {
-                "a": {
-                    "type": "Uint16",
-                    "value": 16
-                },
-                "b": {
-                    "type": "Uint32",
-                    "value": 32
+        "type": "Container",
+        "value": {
+            "fixed": {
+                "type": "Vector",
+                "value": [
+                    {
+                        "type": "Uint8",
+                        "value": 0
+                    },
+                    {
+                        "type": "Uint8",
+                        "value": 1
+                    },
+                    {
+                        "type": "Uint8",
+                        "value": 2
+                    },
+                    {
+                        "type": "Uint8",
+                        "value": 3
+                    },
+                    {
+                        "type": "Uint8",
+                        "value": 4
+                    }
+                ]
+            },
+            "other": {
+                "type": "Container",
+                "value": {
+                    "a": {
+                        "type": "Uint16",
+                        "value": 16
+                    },
+                    "b": {
+                        "type": "Uint32",
+                        "value": 32
+                    }
                 }
             }
         }
     }
 }
 "#;
+        assert_eq!(
+            json_to_ssz(json.as_bytes().into()),
+            [0, 1, 2, 3, 4, 16, 0, 32, 0, 0, 0]
+        );
+    }
 
-        let f: SszFixedType = serde_json::from_str(json).unwrap();
-        assert_eq!(dfs_json(&f), [0, 1, 2, 3, 4, 16, 0, 32, 0, 0, 0]);
+    #[test]
+    fn test_simple_variable_size() {
+        let json = r#"     
+{   
+    "type": "Variable",
+    "value": {
+        "type": "List",
+        "value": [
+            {
+                "type": "Fixed",
+                "value": {
+                    "type": "Uint8",
+                    "value": 0
+                }
+            },
+            {
+                "type": "Fixed",
+                "value": {
+                    "type": "Uint8",
+                    "value": 1
+                }
+            },
+            {
+                "type": "Fixed",
+                "value": {
+                    "type": "Uint8",
+                    "value": 2
+                }
+            },
+            {
+                "type": "Fixed",
+                "value": {
+                    "type": "Uint8",
+                    "value": 3
+                }
+            }
+        ]
+    }
+}
+"#;
+
+        assert_eq!(
+            json_to_ssz(json.as_bytes().into()),
+            [4, 0, 0, 0, 0, 1, 2, 3]
+        );
     }
 }
