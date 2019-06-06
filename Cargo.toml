@@ -13,6 +13,10 @@ edition = "2018"
 ssz = "0.1.2"
 clap = "2.33.0"
 hex = "0.3.2"
+serde_json = { version = "1.0.39", features = ["preserve_order"] }
+ssz-derive = "0.1.2"
+serde = { version = "1.0.92", features = ["derive"] }
+indexmap = {version = "1.0.2", features = ["serde-1"]}
 
 [[bin]]
 name = "ssz"
