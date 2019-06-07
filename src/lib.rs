@@ -28,11 +28,11 @@ fn serialize(v: &Value) -> Vec<u8> {
                     "u256" => {
                         let u = U256::from_dec_str(&n[..]).unwrap();
                         let mut result: Vec<u8> = vec![];
-                        for i in 0..31 {
+                        for i in 0..32 {
                             result.push(u.byte(i));
                         }
 
-                        result.encode()[3..].into()
+                        result.encode()[4..].into()
                     }
                     t => panic!("Unknown integer type: {}", t),
                 }
