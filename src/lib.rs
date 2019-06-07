@@ -1,3 +1,4 @@
+use ethereum_types::U256;
 use serde_json::Value;
 use ssz::Encode;
 
@@ -24,6 +25,15 @@ fn serialize(v: &Value) -> Vec<u8> {
                     "u32" => n.parse::<u32>().unwrap().encode(),
                     "u64" => n.parse::<u64>().unwrap().encode(),
                     "u128" => n.parse::<u128>().unwrap().encode(),
+                    "u256" => {
+                        let u = U256::from_dec_str(&n[..]).unwrap();
+                        let mut result: Vec<u8> = vec![];
+                        for i in 0..31 {
+                            result.push(u.byte(i));
+                        }
+
+                        result.encode()[3..].into()
+                    }
                     t => panic!("Unknown integer type: {}", t),
                 }
             } else {

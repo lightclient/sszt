@@ -14,3 +14,4 @@ serde = { version = "1.0.92", features = ["derive"] }
 serde_json = { version = "1.0.39", features = ["preserve_order"] }
 ssz = "0.1.2"
 ssz-derive = "0.1.2"
+ethereum-types = "0.6.0"
