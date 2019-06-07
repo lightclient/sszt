@@ -12,7 +12,7 @@ edition = "2018"
 [dependencies]
 clap = "2.33.0"
 hex = "0.3.2"
-ssz-json = { path = "../" }
+ssz-json = { path = "../", version = "0.0.2" }
 
 [[bin]]
 name = "ssz"
