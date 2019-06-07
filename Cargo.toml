@@ -1,6 +1,6 @@
 [package]
 name = "ssz-json"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Matt Garnett <14004106+c-o-l-o-r@users.noreply.github.com>"]
 license = "Apache-2.0"
 description = "A library which serializes json to ssz"
