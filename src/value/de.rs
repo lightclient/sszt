@@ -1,4 +1,4 @@
-use crate::{SsztNumber, SsztValue};
+use crate::value::{SsztNumber, SsztValue};
 use ethereum_types::U256;
 use indexmap::IndexMap;
 use serde::de::{self, Deserialize, Deserializer, Visitor};
