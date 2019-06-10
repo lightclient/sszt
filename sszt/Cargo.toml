@@ -1,9 +1,9 @@
 [package]
-name = "ssz-json"
-version = "0.0.2"
+name = "sszt"
+version = "0.1.0"
 authors = ["Matt Garnett <14004106+c-o-l-o-r@users.noreply.github.com>"]
 license = "Apache-2.0"
-description = "A library which serializes json to ssz"
+description = "A textual representation of ssz encoded structures"
 repository = "https://github.com/c-o-l-o-r/ssz-json"
 keywords = ["ssz", "wasm", "ewasm"]
 categories = ["encoding"]
@@ -15,3 +15,4 @@ serde_json = { version = "1.0.39", features = ["preserve_order"] }
 ssz = "0.1.2"
 ssz-derive = "0.1.2"
 ethereum-types = "0.6.0"
+indexmap = "1.0.2"

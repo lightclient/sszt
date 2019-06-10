@@ -276,10 +276,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "ssz-json"
-version = "0.0.1"
+name = "sszt"
+version = "0.1.0"
 dependencies = [
  "ethereum-types 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "indexmap 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.92 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
  "ssz 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",

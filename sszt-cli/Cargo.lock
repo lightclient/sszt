@@ -322,11 +322,11 @@ dependencies = [
 
 [[package]]
 name = "ssz-cli"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "hex 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "ssz-json 0.0.1",
+ "ssz-json 0.0.2",
 ]
 
 [[package]]
@@ -341,7 +341,7 @@ dependencies = [
 
 [[package]]
 name = "ssz-json"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "ethereum-types 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.92 (registry+https://github.com/rust-lang/crates.io-index)",
