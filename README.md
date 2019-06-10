@@ -1,21 +1,27 @@
-# ssz-json
+# sszt
 
-A human readable ssz format using json.
+A human-readable serialization of [ssz](https://github.com/ethereum/eth2.0-specs/blob/dev/specs/simple-serialize.md).
 
 ## Format
-The format is a subset of JSON and follows most of the conventions closely. The two biggest
-deviations are appending the integer type at the end of the number using a string and
-declaring the type array (list / vector) in the first element.
+The `sszt` engine is written as a Serde deserializer for the recursive `SsztValue` enum and should
+be easily modified to support most formats supported by Serde. 
+
+Two major formats are currently supported:
+* JSON
+* YAML
+
+The biggest deviations from the JSON / YAML specifications are appending the integer type at the
+end of the number using a string and declaring the type array (list / vector) in the first element.
 
 | Type | Representation| 
 | -- |--| 
 | null | `null`
-| bool | `true | false`
-| number | `"N:{u8|u16|u32|u64|u128|u256}"`
+| bool | `true \| false`
+| number | `"N:{u8\|u16\|u32\|u64\|u128\|u256}"`
 | string | `"string"`
 | vector (fixed length) | `["vector", "0:u8", "1:u8"]`
 | list (variable length) | `["list", "0:u8", "1:u8"]`
-| object | `{ "key1": "123u32", "key2": ["vector", "456u32"] }`
+| object | `{ "key1": "123:u32", "key2": ["vector", "456:u32"] }`
 
 ## Examples
 ```json
