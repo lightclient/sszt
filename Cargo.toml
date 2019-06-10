@@ -1,10 +1,10 @@
 [package]
 name = "sszt"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Matt Garnett <14004106+c-o-l-o-r@users.noreply.github.com>"]
 license = "Apache-2.0"
-description = "A textual representation of ssz encoded structures"
-repository = "https://github.com/c-o-l-o-r/ssz-json"
+description = "A human-readable representation of SSZ."
+repository = "https://github.com/c-o-l-o-r/sszt"
 keywords = ["ssz", "wasm", "ewasm"]
 categories = ["encoding"]
 edition = "2018"
