@@ -76,7 +76,7 @@ impl<'de> Visitor<'de> for SszValueVisitor {
                 v => panic!("Unknown array type: {:?}", v),
             }
         } else {
-            unreachable!()
+            unimplemented!()
         }
     }
 

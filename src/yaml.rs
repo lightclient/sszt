@@ -10,6 +10,8 @@ pub fn to_ssz(data: Vec<u8>) -> Vec<u8> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indexmap::IndexMap;
+    use ssz::{Decode, Encode};
 
     #[test]
     fn simple_fixed_size() {
@@ -78,11 +80,30 @@ mod tests {
             - "3:u8"
         "#;
 
-        assert_eq!(to_ssz(json.as_bytes().into()), [4, 0, 0, 0, 0, 1, 2, 3]);
+        assert_eq!(
+            to_ssz(json.as_bytes().into()),
+            vec![0u8, 1u8, 2u8, 3u8].encode()
+        );
+    }
+
+    #[derive(Debug, PartialEq, Ssz)]
+    struct A {
+        a: B,
+    }
+
+    #[derive(Debug, PartialEq, Ssz)]
+    struct B {
+        b: Vec<u8>,
     }
 
     #[test]
     fn variable_size() {
+        let a = A {
+            a: B {
+                b: vec![0, 1, 2, 3],
+            },
+        };
+
         let json = r#"
             "lists":
                 "a_list":
@@ -93,9 +114,101 @@ mod tests {
                     - "3:u8"
             "#;
 
-        assert_eq!(
-            to_ssz(json.as_bytes().into()),
-            [12, 0, 0, 0, 8, 0, 0, 0, 4, 0, 0, 0, 0, 1, 2, 3]
-        );
+        assert_eq!(to_ssz(json.as_bytes().into()), a.encode());
+    }
+
+    #[test]
+    fn empty_container_list() {
+        #[derive(Debug, PartialEq, Ssz)]
+        struct A {
+            a: B,
+        }
+
+        #[derive(Debug, PartialEq, Ssz)]
+        struct B {
+            b: Vec<B>,
+        }
+
+        let a = A { a: B { b: vec![] } };
+
+        let yaml = r#"
+            a:
+                b:
+                    - list
+        "#;
+
+        let encoded = to_ssz(yaml.as_bytes().into());
+        assert_eq!(encoded, a.encode());
+
+        let decoded = A::decode(&mut &encoded[..]).unwrap();
+        assert_eq!(decoded, a);
+    }
+
+    #[derive(Debug, PartialEq, Ssz, Default)]
+    struct Message {
+        pub timestamp: u64,
+        pub message: [u8; 32],
+    }
+
+    #[derive(Debug, PartialEq, Ssz, Default)]
+    struct State {
+        pub messages: Vec<Message>,
+    }
+
+    #[derive(Debug, PartialEq, Ssz, Default)]
+    struct InputBlock {
+        pub new_messages: Vec<Message>,
+        pub state: State,
+    }
+
+    #[test]
+    fn bazaar_messages() {
+        let block = InputBlock {
+            new_messages: vec![
+                Message {
+                    timestamp: 1,
+                    message: [0u8; 32],
+                },
+                Message {
+                    timestamp: 2,
+                    message: [1u8; 32],
+                },
+            ],
+            state: State { messages: vec![] },
+        };
+
+        let yaml = r#"
+        new_messages:
+                - list
+                - timestamp: 1:u64
+                  message: 0:u256
+                - timestamp: 2:u64
+                  message: 454086624460063511464984254936031011189294057512315937409637584344757371137:u256
+        state:
+            messages:
+                - list
+        "#;
+
+        let encoded = to_ssz(yaml.as_bytes().into());
+        assert_eq!(encoded, block.encode());
+
+        let decoded = InputBlock::decode(&mut &encoded[..]).unwrap();
+        assert_eq!(decoded, block);
+    }
+
+    #[test]
+    fn bazaar_state() {
+        let state = State { messages: vec![] };
+
+        let yaml = r#"
+        messages:
+            - list
+        "#;
+
+        let encoded = to_ssz(yaml.as_bytes().into());
+        assert_eq!(encoded, state.encode());
+
+        let decoded = State::decode(&mut &encoded[..]).unwrap();
+        assert_eq!(decoded, state);
     }
 }

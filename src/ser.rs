@@ -15,7 +15,7 @@ pub fn serialize(v: &SsztValue) -> Vec<u8> {
                 .iter()
                 .fold(vec![], |acc, val| [&acc[..], &serialize(val)[..]].concat());
 
-            let mut len = (l.len() as u32).encode();
+            let mut len = (list.len() as u32).encode();
             len.extend(list);
 
             len
