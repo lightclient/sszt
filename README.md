@@ -1,5 +1,7 @@
 # sszt
 
+[![Build Status](https://travis-ci.com/c-o-l-o-r/sszt.svg?branch=master)](https://travis-ci.com/c-o-l-o-r/sszt)
+
 A human-readable serialization of [ssz](https://github.com/ethereum/eth2.0-specs/blob/dev/specs/simple-serialize.md).
 
 ## Format
